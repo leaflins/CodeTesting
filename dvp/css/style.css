@@ -330,3 +330,20 @@ select:focus {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+/* ---------- Choropleth map ---------- */
+.map-container { position: relative; width: 100%; margin-top: 16px; }
+#mapChart { height: 560px; width: 100%; border-radius: 12px; overflow: hidden; background: #141a2f; }
+#mapEmptyState {
+  position: absolute; inset: 0; z-index: 1000; display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 24px; background: rgba(20, 26, 47, 0.85); border-radius: 12px;
+}
+#mapEmptyState[style*="block"] { display: flex !important; }
+.legend {
+  background: rgba(20, 26, 47, 0.92); color: #e8ecff; padding: 10px 12px;
+  border-radius: 8px; font-size: 12px; line-height: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.4);
+}
+.legend .legend-heading { font-weight: 600; margin-bottom: 4px; }
+.legend .legend-top { color: #ffd700; margin-bottom: 6px; }
+.legend i { display: inline-block; width: 16px; height: 12px; margin-right: 8px; border-radius: 2px; opacity: .9; }
+@media (max-width: 640px) { #mapChart { height: 420px; } }
