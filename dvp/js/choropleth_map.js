@@ -13,8 +13,8 @@ const MAP_CONFIG = {
     'police_enforcement_2024_positive_drug_tests.xlsx',
     '../data/police_enforcement_2024_positive_drug_tests.xlsx'
   ],
-  NO_DATA_COLOR: '#2a3150',
-  HIGHLIGHT: '#ffd700'
+  NO_DATA_COLOR: '#DDE3EE',
+  HIGHLIGHT: '#C26A1A'
 };
 
 const MEASURE_LABELS = {
@@ -155,7 +155,7 @@ function renderChoropleth(fitToData) {
   const grandTotal = values.reduce((a, b) => a + b, 0);
   const top = maxValue > 0 ? Object.keys(totals).find(k => totals[k] === maxValue) : null;
 
-  const color = d3.scaleSequentialSqrt(d3.interpolateYlOrRd).domain([0, maxValue || 1]);
+  const color = d3.scaleSequentialSqrt(d3.interpolateRgb('#CFE3F6', '#1B2559')).domain([0, maxValue || 1]);
 
   if (geoLayer) map.removeLayer(geoLayer);
   geoLayer = L.geoJSON(window.AUSTRALIA_STATES, {

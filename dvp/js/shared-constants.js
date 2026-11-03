@@ -12,12 +12,12 @@ const CONFIG = {
     },
     DEFAULT_GROUP_BY: 'JURISDICTION',
     CHART_COLORS: {
-        primary: '#5ab2ff',
-        secondary: '#b983ff',
-        success: '#4ade80',
-        warning: '#fbbf24',
-        breath: '#5ab2ff',
-        drug: '#b983ff'
+        primary: '#2A4A8D',
+        secondary: '#B8651B',
+        success: '#2F855A',
+        warning: '#C26A1A',
+        breath: '#2A4A8D',
+        drug: '#B8651B'
     }
 };
 

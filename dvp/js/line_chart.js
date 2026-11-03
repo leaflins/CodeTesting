@@ -11,11 +11,11 @@ document.addEventListener('DOMContentLoaded', function () {
             '../data/police_enforcement_2024_fines.xlsx'
         ],
         CHART_COLORS: {
-            primary: '#5ab2ff',
-            secondary: '#b983ff',
-            hover: '#8ecaff',
-            grid: 'rgba(255, 255, 255, 0.1)',
-            areaGradient: ['#5ab2ff20', '#5ab2ff01']
+            primary: '#1E90C8',
+            secondary: '#B8651B',
+            hover: '#5AA9E6',
+            grid: '#DDE3EE',
+            areaGradient: ['#1E90C830', '#1E90C805']
         },
         ANIMATION_DURATION: 1000
     };
@@ -409,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .attr("y", d => yScale(d.value) - 15)
             .attr("text-anchor", "middle")
             .text(d => `$${formatNumber(d.value)}`)
-            .style("fill", "#e7ecff")
+            .style("fill", "#1B2333")
             .style("font-size", "11px")
             .style("font-weight", "bold")
             .style("pointer-events", "none")
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .call(xAxis);
 
         xAxisGroup.selectAll('text')
-            .style('fill', '#a8b0c5')
+            .style('fill', '#5B6578')
             .style('font-size', '11px');
 
         // Add Y axis
@@ -441,7 +441,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .attr('class', 'y-axis')
             .call(yAxis)
             .selectAll('text')
-            .style('fill', '#a8b0c5')
+            .style('fill', '#5B6578')
             .style('font-size', '11px');
 
         // Add axis labels
@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .attr('x', width / 2)
             .attr('y', height + margin.bottom - 10)
             .text(groupBy)
-            .style('fill', '#a8b0c5')
+            .style('fill', '#5B6578')
             .style('font-size', '12px');
 
         svg.append('text')
@@ -461,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .attr('x', -height / 2)
             .attr('y', -margin.left + 15)
             .text('Total Fines ($)')
-            .style('fill', '#a8b0c5')
+            .style('fill', '#5B6578')
             .style('font-size', '12px');
 
         // Add chart title
@@ -471,7 +471,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .attr('x', width / 2)
             .attr('y', -20)
             .text(`Total Fines Trend by ${groupBy}`)
-            .style('fill', '#e7ecff')
+            .style('fill', '#1B2333')
             .style('font-size', '16px')
             .style('font-weight', 'bold');
     }

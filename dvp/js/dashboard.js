@@ -460,15 +460,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Add keyboard shortcut for export
-    document.addEventListener('keydown', function(e) {
-        if (e.altKey && e.key === 'e') {
-            e.preventDefault();
-            window.exportCurrentData();
-        }
-    });
     
-    // Initialize export button after a short delay
-    setTimeout(addExportButton, 1000);
+    // (Export button removed: it is no longer added to the page.)
     
     // Make initialization function available globally for debugging
     window.initializeSectionCharts = initializeSectionCharts;

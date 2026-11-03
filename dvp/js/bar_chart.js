@@ -367,7 +367,7 @@ function createD3BarChart(data, groupBy) {
         .attr("dx", "-.8em")
         .attr("dy", ".15em")
         .attr("transform", "rotate(-45)")
-        .style("fill", "#a8b0c5")
+        .style("fill", "#5B6578")
         .style("font-size", "12px");
     
     // Add Y axis with animation
@@ -377,7 +377,7 @@ function createD3BarChart(data, groupBy) {
     
     yAxisGroup.call(yAxis)
         .selectAll("text")
-        .style("fill", "#a8b0c5")
+        .style("fill", "#5B6578")
         .style("font-size", "12px");
     
     // Add axis labels with animation
@@ -387,7 +387,7 @@ function createD3BarChart(data, groupBy) {
         .attr("x", width / 2)
         .attr("y", height + margin.bottom - 10)
         .text(groupBy)
-        .style("fill", "#a8b0c5")
+        .style("fill", "#5B6578")
         .style("font-size", "14px")
         .style("opacity", 0);
     
@@ -398,7 +398,7 @@ function createD3BarChart(data, groupBy) {
         .attr("x", -height / 2)
         .attr("y", -margin.left + 15)
         .text("Total COUNT")
-        .style("fill", "#a8b0c5")
+        .style("fill", "#5B6578")
         .style("font-size", "14px")
         .style("opacity", 0);
     
@@ -409,7 +409,7 @@ function createD3BarChart(data, groupBy) {
         .attr("x", width / 2)
         .attr("y", -20)
         .text(`Total COUNT by ${groupBy}`)
-        .style("fill", "#e7ecff")
+        .style("fill", "#1B2333")
         .style("font-size", "18px")
         .style("font-weight", "bold")
         .style("opacity", 0);
@@ -514,7 +514,7 @@ function createAnimatedBars(data) {
         .attr("y", height) // Start from bottom
         .attr("text-anchor", "middle")
         .text(d => d3.format(',')(d.count))
-        .style("fill", "#e7ecff")
+        .style("fill", "#1B2333")
         .style("font-size", "12px")
         .style("font-weight", "bold")
         .style("opacity", 0);
@@ -686,7 +686,7 @@ function updateChartWithTransitions(data, groupBy) {
         .attr("y", height) // Start from bottom
         .attr("text-anchor", "middle")
         .text(d => d3.format(',')(d.count))
-        .style("fill", "#e7ecff")
+        .style("fill", "#1B2333")
         .style("font-size", "12px")
         .style("font-weight", "bold")
         .style("opacity", 0)

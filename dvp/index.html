@@ -14,29 +14,25 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 </head>
 <body>
-  <!-- Header with navigation -->
-  <header>
-    <div class="header-content">
-      <div class="header-text">
-        <h1>Road Safety Dashboard</h1>
-        <p>Visualize road safety enforcement data with interactive charts and statistics</p>
-      </div>
-      <nav class="header-nav">
+  <div class="shell">
+  <aside class="rail">
+    <div class="rail-brand">
+      <span class="rail-kicker">Australia &middot; 2008&ndash;2024</span>
+      <h1>Road Safety Enforcement</h1>
+      <p>What police tested, found and fined on the road.</p>
+    </div>
+    <nav class="header-nav" aria-label="Chapters">
         <button class="nav-btn active" data-section="overview">Overview</button>
         <button class="nav-btn" data-section="enforcement">Enforcement</button>
         <button class="nav-btn" data-section="fines">Fines Analysis</button>
         <button class="nav-btn" data-section="map">Drug Test Map</button>
       </nav>
-    </div>
-  </header>
-
-  <div class="container">
     <!-- Status indicator -->
-    <div class="status-card card">
+    <div class="status-card">
       <div class="status">
         <div class="status-indicator" id="statusIndicator"></div>
         <span id="statusText">Ready to load data</span>
@@ -48,8 +44,10 @@
         Refresh
       </button>
     </div>
-
-    <!-- Overview Section -->
+  </aside>
+  <div class="main">
+  <div class="container">
+<!-- Overview Section -->
     <section id="overview-section" class="dashboard-section active">
       <!-- Data Overview Stats -->
       <div class="card overview">
@@ -480,6 +478,8 @@
       <p>&copy; 2024 Road Safety Dashboard. All data is for demonstration purposes.</p>
     </div>
   </footer>
+  </div>
+</div>
 
   <!-- JavaScript files -->
   <script src="js/shared-constants.js"></script>
@@ -489,6 +489,7 @@
   <!-- <script src="js/map.js"></script> -->
   <script src="js/australia_states.js"></script>
   <script src="js/choropleth_map.js"></script>
+  <script src="js/layout.js"></script>
 
 </body>
 </html>
