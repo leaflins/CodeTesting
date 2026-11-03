@@ -1,495 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Interactive dashboard visualizing road safety enforcement data including breath tests, drug tests, fines, arrests, and charges across different jurisdictions.">
-  <title>Road Safety Dashboard - Enforcement Data Visualization</title>
-  <!-- D3.js and XLSX libraries -->
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <!-- Leaflet for choropleth map -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospitalised Road Injuries · Australia 2011–2021</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="shell">
+<div class="shell">
   <aside class="rail">
     <div class="rail-brand">
-      <span class="rail-kicker">Australia &middot; 2008&ndash;2024</span>
-      <h1>Road Safety Enforcement</h1>
-      <p>What police tested, found and fined on the road.</p>
+      <span class="rail-kicker">Australia &middot; 2011&ndash;2021</span>
+      <h1>Hospitalised Road Injuries</h1>
+      <p>Who is hurt on our roads, and how has it changed?</p>
     </div>
     <nav class="header-nav" aria-label="Chapters">
-        <button class="nav-btn active" data-section="overview">Overview</button>
-        <button class="nav-btn" data-section="enforcement">Enforcement</button>
-        <button class="nav-btn" data-section="fines">Fines Analysis</button>
-        <button class="nav-btn" data-section="map">Drug Test Map</button>
-      </nav>
-    <!-- Status indicator -->
+      <button class="nav-btn active" data-section="overview">Overview</button>
+      <button class="nav-btn" data-section="time">Over time</button>
+      <button class="nav-btn" data-section="who">Who is affected</button>
+      <button class="nav-btn" data-section="where">Where</button>
+    </nav>
     <div class="status-card">
-      <div class="status">
-        <div class="status-indicator" id="statusIndicator"></div>
-        <span id="statusText">Ready to load data</span>
-      </div>
-      <button id="refreshData" class="refresh-btn" title="Refresh data">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-        </svg>
-        Refresh
-      </button>
+      <div class="status"><span id="statusIndicator" class="status-indicator loading"></span><span id="statusText">Loading data&hellip;</span></div>
     </div>
   </aside>
   <div class="main">
-  <div class="container">
-<!-- Overview Section -->
-    <section id="overview-section" class="dashboard-section active">
-      <!-- Data Overview Stats -->
-      <div class="card overview">
-        <div class="section-header">
-          <h2>Enforcement Data Overview</h2>
-          <p>Summary of the currently filtered data</p>
-        </div>
-        <div class="statgrid">
-          <div class="stat">
-            <div class="stat-icon">📊</div>
-            <div class="stat-content">
-              <div class="label">Total COUNT</div>
-              <div class="value" id="sb-total">–</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">📋</div>
-            <div class="stat-content">
-              <div class="label">Data Rows</div>
-              <div class="value" id="sb-rows">–</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">📅</div>
-            <div class="stat-content">
-              <div class="label">Years</div>
-              <div class="value" id="sb-years">–</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">🏛️</div>
-            <div class="stat-content">
-              <div class="label">Jurisdictions</div>
-              <div class="value" id="sb-jurs">–</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">📏</div>
-            <div class="stat-content">
-              <div class="label">Metrics</div>
-              <div class="value" id="sb-metrics">–</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">🔍</div>
-            <div class="stat-content">
-              <div class="label">Detection Methods</div>
-              <div class="value" id="sb-methods">–</div>
-            </div>
-          </div>
-        </div>
+    <div class="container">
+      <div class="filters">
+        <div class="controls" id="controls" aria-label="Filters"></div>
+        <button id="reset" class="refresh-btn" type="button">Reset filters</button>
+        <p class="hint">These choices change every chart. You can also click a bar or a year to filter.</p>
       </div>
 
-      <!-- Total Fines Overview -->
-      <div class="card overview">
-        <div class="section-header">
-          <h2>Fines Data Overview</h2>
-          <p>Summary of fines, arrests, and charges data</p>
+      <section class="dashboard-section" id="overview-section">
+        <div class="card overview">
+          <div class="section-header"><h2>How many people were hospitalised?</h2><p>Figures for the current selection of filters.</p></div>
+          <div class="statgrid" id="kpis"></div>
         </div>
-        <div class="statgrid">
-          <div class="stat">
-            <div class="stat-icon">💰</div>
-            <div class="stat-content">
-              <div class="label">Total Fines</div>
-              <div class="value" id="fines-total">–</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">🚨</div>
-            <div class="stat-content">
-              <div class="label">Total Arrests</div>
-              <div class="value" id="fines-arrests">–</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">⚖️</div>
-            <div class="stat-content">
-              <div class="label">Total Charges</div>
-              <div class="value" id="fines-charges">–</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">📅</div>
-            <div class="stat-content">
-              <div class="label">Years Covered</div>
-              <div class="value" id="fines-years">–</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">🏛️</div>
-            <div class="stat-content">
-              <div class="label">Jurisdictions</div>
-              <div class="value" id="fines-jurisdictions">–</div>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-icon">👥</div>
-            <div class="stat-content">
-              <div class="label">Age Groups</div>
-              <div class="value" id="fines-agegroups">–</div>
-            </div>
-          </div>
+        <div class="card overview">
+          <div class="section-header"><h2>Key findings</h2><p>These sentences update as you change the filters.</p></div>
+          <div class="story-grid" id="findings"></div>
         </div>
-      </div>
+      </section>
 
-      <!-- map data overview -->
-<div class="card overview">
-  <div class="section-header">
-    <h2>Map Data Overview</h2>
-    <p>Summary of positive drug test data used in the interactive map</p>
-  </div>
-  <div class="statgrid">
-    <div class="stat">
-      <div class="stat-icon">🗺️</div>
-      <div class="stat-content">
-        <div class="label">Map Data Rows</div>
-        <div class="value" id="map-data-rows">–</div>
-      </div>
+      <section class="dashboard-section" id="time-section">
+        <div class="card">
+          <div class="section-header"><h2>Did hospitalisations change between 2011 and 2021?</h2><p>Hospitalisations per year. 2020, the first COVID-19 year, is marked in amber.</p></div>
+          <div class="chart-container" id="trend"></div>
+        </div>
+        <div class="card">
+          <div class="section-header"><h2>What happened in 2020?</h2><p>Each month of 2020 compared with the average for the same month in 2017&ndash;2019.</p></div>
+          <div class="chart-container" id="months"></div>
+        </div>
+      </section>
+
+      <section class="dashboard-section" id="who-section">
+        <div class="card">
+          <div class="section-header"><h2>Which road users are hospitalised most?</h2><p>Ranked by number of hospitalisations. Click a bar to focus on that group.</p></div>
+          <div class="chart-container" id="users"></div>
+        </div>
+        <div class="card">
+          <div class="section-header"><h2>Which age groups are affected?</h2><p>Hospitalisations by age group.</p></div>
+          <div class="chart-container" id="ages"></div>
+        </div>
+      </section>
+
+      <section class="dashboard-section" id="where-section">
+        <div class="card">
+          <div class="section-header"><h2>Where do the hospitalisations happen?</h2><p>By ABS remoteness area of the person&rsquo;s injury record. &ldquo;Not stated&rdquo; means the area was missing in the data.</p></div>
+          <div class="chart-container" id="remote"></div>
+        </div>
+      </section>
     </div>
-    <div class="stat">
-      <div class="stat-icon">💊</div>
-      <div class="stat-content">
-        <div class="label">Positive Tests</div>
-        <div class="value" id="map-total-tests">–</div>
+    <footer>
+      <div class="footer-content">
+        <div class="footer-info"><h3>About this data</h3><p>CSVG6.csv: cleaned hospitalised road-injury records, 2011&ndash;2021. Figures are counts of hospitalisations, not rates per person or per kilometre travelled.</p></div>
       </div>
-    </div>
-    <div class="stat">
-      <div class="stat-icon">🏛️</div>
-      <div class="stat-content">
-        <div class="label">Jurisdictions</div>
-        <div class="value" id="map-total-jurisdictions">–</div>
-      </div>
-    </div>
-    <div class="stat">
-      <div class="stat-icon">📅</div>
-      <div class="stat-content">
-        <div class="label">Years Covered</div>
-        <div class="value" id="map-total-years">–</div>
-      </div>
-    </div>
-    <div class="stat">
-      <div class="stat-icon">🔍</div>
-      <div class="stat-content">
-        <div class="label">Detection Methods</div>
-        <div class="value" id="map-total-methods">–</div>
-      </div>
-    </div>
-    <div class="stat">
-      <div class="stat-icon">📊</div>
-      <div class="stat-content">
-        <div class="label">Avg per Jurisdiction</div>
-        <div class="value" id="map-avg-jurisdiction">–</div>
-      </div>
-    </div>
+    </footer>
   </div>
 </div>
-
-      <!-- Road Safety Insights -->
-      <div class="card storyboard">
-        <div class="section-header">
-          <h2>Road Safety Insights</h2>
-          <p>Key findings and patterns from the enforcement data</p>
-        </div>
-        <div class="story-grid" id="storyboard">
-          <div class="story-card">
-            <div class="story-icon">🚗</div>
-            <div class="story-content">
-              <h4>Breath Tests Over Time</h4>
-              <p id="breath-tests-story">Loading breath test analysis...</p>
-            </div>
-          </div>
-          <div class="story-card">
-            <div class="story-icon">💊</div>
-            <div class="story-content">
-              <h4>Drug Tests Evolution</h4>
-              <p id="drug-tests-story">Loading drug test analysis...</p>
-            </div>
-          </div>
-          <div class="story-card">
-            <div class="story-icon">🏛️</div>
-            <div class="story-content">
-              <h4>Jurisdiction Comparison</h4>
-              <p id="jurisdiction-story">Loading jurisdiction analysis...</p>
-            </div>
-          </div>
-          <div class="story-card">
-            <div class="story-icon">📈</div>
-            <div class="story-content">
-              <h4>Annual Trends</h4>
-              <p id="trends-story">Loading trend analysis...</p>
-            </div>
-          </div>
-          <div class="story-card">
-            <div class="story-icon">💵</div>
-            <div class="story-content">
-              <h4>Fines Analysis</h4>
-              <p id="fines-story">Loading fines analysis...</p>
-            </div>
-          </div>
-          <div class="story-card">
-            <div class="story-icon">🌍</div>
-            <div class="story-content">
-              <h4>Regional Enforcement</h4>
-              <p id="regional-story">Loading regional analysis...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Enforcement Data Section -->
-    <section id="enforcement-section" class="dashboard-section">
-      <div class="card">
-        <div class="section-header">
-          <h2>Enforcement Data Analysis</h2>
-          <p>Explore enforcement statistics with interactive filters</p>
-        </div>
-        
-        <div class="controls">
-          <div class="control-group">
-            <label for="groupBy">Group By</label>
-            <select id="groupBy">
-              <option value="JURISDICTION">Jurisdiction</option>
-              <option value="METRIC">Metric</option>
-              <option value="DETECTION_METHOD">Detection Method</option>
-              <option value="YEAR">Year</option>
-            </select>
-          </div>
-          <div class="control-group">
-            <label for="year">Year</label>
-            <select id="year">
-              <option value="__all__">All Years</option>
-            </select>
-          </div>
-          <div class="control-group">
-            <label for="jurisdiction">Jurisdiction</label>
-            <select id="jurisdiction">
-              <option value="__all__">All Jurisdictions</option>
-            </select>
-          </div>
-          <div class="control-group">
-            <label for="metric">Metric</label>
-            <select id="metric">
-              <option value="__all__">All Metrics</option>
-            </select>
-          </div>
-          <div class="control-group">
-            <label for="method">Detection Method</label>
-            <select id="method">
-              <option value="__all__">All Methods</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="data-summary" id="dataSummary" style="display: none;">
-          <div class="summary-item">
-            <div class="summary-value" id="summaryTotal">0</div>
-            <div class="summary-label">Total COUNT</div>
-          </div>
-          <div class="summary-item">
-            <div class="summary-value" id="summaryRows">0</div>
-            <div class="summary-label">Rows</div>
-          </div>
-          <div class="summary-item">
-            <div class="summary-value" id="summaryYears">0</div>
-            <div class="summary-label">Years</div>
-          </div>
-          <div class="summary-item">
-            <div class="summary-value" id="summaryJurisdictions">0</div>
-            <div class="summary-label">Jurisdictions</div>
-          </div>
-        </div>
-
-        <div class="chart-container">
-          <div id="chart"></div>
-          <div id="emptyState" class="empty-state" style="display:none">
-            <div class="empty-icon">📊</div>
-            <h3>No data to display</h3>
-            <p>No rows match the current filters. Try adjusting your filter criteria.</p>
-          </div>
-          <div class="footer-note">Y-axis shows the sum of <strong>COUNT</strong> for the selected grouping.</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Fines Analysis Section -->
-    <section id="fines-section" class="dashboard-section">
-      <div class="card">
-        <div class="section-header">
-          <h2>Total Fines by Year</h2>
-          <p>Detailed breakdown of fines data with interactive filters</p>
-        </div>
-        
-        <div class="chart-container">
-          <div id="newChart"></div>
-          <div id="finesEmptyState" class="empty-state" style="display:none">
-            <div class="empty-icon">💰</div>
-            <h3>No fines data to display</h3>
-            <p>No rows match the current filters. Try adjusting your filter criteria.</p>
-          </div>
-          <div class="footer-note">Y-axis shows the sum of <strong>FINES</strong> for the selected grouping.</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Map Chart Section -->
-    <section id="map-section" class="dashboard-section">
-      <div class="card">
-        <div class="section-header">
-          <h2>Positive Drug Test Map</h2>
-          <p>Visualize positive drug tests by jurisdiction on an interactive map</p>
-        </div>
-        
-        <!-- Map controls -->
-        <div class="controls">
-          <div class="control-group">
-            <label for="mapYear">Year</label>
-            <select id="mapYear">
-              <option value="__all__">All Years</option>
-            </select>
-          </div>
-          <div class="control-group">
-            <label for="mapJurisdiction">Jurisdiction</label>
-            <select id="mapJurisdiction">
-              <option value="__all__">All Jurisdictions</option>
-            </select>
-          </div>
-          <div class="control-group">
-            <label for="mapMetric">Measure</label>
-            <select id="mapMetric">
-              <option value="COUNT">Positive Drug Tests</option>
-              <option value="FINES">Fines</option>
-              <option value="ARRESTS">Arrests</option>
-              <option value="CHARGES">Charges</option>
-            </select>
-          </div>
-          <div class="control-group">
-            <label for="mapDetectionMethod">Detection Method</label>
-            <select id="mapDetectionMethod">
-              <option value="__all__">All Methods</option>
-            </select>
-          </div>
-        </div>
-        
-        <!-- Map data summary -->
-        <div class="data-summary" id="mapDataSummary" style="display: none;">
-          <div class="summary-item">
-            <div class="summary-value" id="mapTotal">0</div>
-            <div class="summary-label">Total</div>
-          </div>
-          <div class="summary-item">
-            <div class="summary-value" id="mapJurisdictions">0</div>
-            <div class="summary-label">Jurisdictions</div>
-          </div>
-          <div class="summary-item">
-            <div class="summary-value" id="mapYears">0</div>
-            <div class="summary-label">Years</div>
-          </div>
-          <div class="summary-item">
-            <div class="summary-value" id="mapAverage">0</div>
-            <div class="summary-label">Average</div>
-          </div>
-        </div>
-        
-        <!-- Map container -->
-        <div id="mapContainer" class="map-container">
-          <div id="mapChart"></div>
-          <div id="mapEmptyState" class="empty-state" style="display:none">
-            <div class="empty-icon">🗺️</div>
-            <h3>No map data to display</h3>
-            <p>No drug test data matches the current filters. Try adjusting your filter criteria.</p>
-          </div>
-        </div>
-        
-        <!-- Map legend -->
-        <div class="map-legend" id="mapLegend" style="display: none;">
-          <div class="legend-title">Positive Drug Tests</div>
-          <div class="legend-scale">
-            <div class="legend-item">
-              <div class="legend-color" style="background-color: #f7fbff;"></div>
-              <div class="legend-label">Low</div>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background-color: #c6dbef;"></div>
-              <div class="legend-label"></div>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background-color: #9ecae1;"></div>
-              <div class="legend-label"></div>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background-color: #6baed6;"></div>
-              <div class="legend-label"></div>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background-color: #4292c6;"></div>
-              <div class="legend-label"></div>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background-color: #2171b5;"></div>
-              <div class="legend-label"></div>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background-color: #084594;"></div>
-              <div class="legend-label">High</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <!-- Footer -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-info">
-        <h3>Road Safety Dashboard</h3>
-        <p>Visualizing enforcement data to improve road safety awareness and policy decisions.</p>
-      </div>
-      <div class="footer-links">
-        <a href="https://datahub.roadsafety.gov.au/safe-systems/safe-road-use/police-enforcement" class="footer-link">Data Source</a>
-        <a href="https://github.com/COS30045-Inti-Subang/data-visualisation-project-dv_groupy06" class="footer-link">Github</a>
-        <a href="#" class="footer-link">About</a>
-        <a href="#" class="footer-link">Contact</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2024 Road Safety Dashboard. All data is for demonstration purposes.</p>
-    </div>
-  </footer>
-  </div>
-</div>
-
-  <!-- JavaScript files -->
-  <script src="js/shared-constants.js"></script>
-  <script src="js/bar_chart.js"></script>
-  <script src="js/line_chart.js"></script>
-  <script src="js/dashboard.js"></script>
-  <!-- <script src="js/map.js"></script> -->
-  <script src="js/australia_states.js"></script>
-  <script src="js/choropleth_map.js"></script>
-  <script src="js/layout.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/layout.js"></script>
 </body>
 </html>
